@@ -7,6 +7,10 @@ class Pompe(models.Model):
     gpio = models.IntegerField(default=0)
 
     @classmethod
+    def get_by_gpio(self, gpio):
+        return self.objects.get(gpio=gpio)
+
+    @classmethod
     def get_by_code(self, code):
         return self.objects.get(code=code)
 
