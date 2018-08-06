@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+    <title>{{pompe.name}} log</title>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <ul>
+            {% for l in logs %}
+            <li>{{l.date}} : {{l.etat}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <a href="/polls">Tableau de bord</a>
+</div>
+</body>
+</html>

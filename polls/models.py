@@ -12,7 +12,7 @@ class Pompe(models.Model):
 
     def status_log(self):
         """ Returns the query set of the given statuses"""
-        return self.status_set.all().order_by("date")
+        return self.status_set.all().order_by("-date")
 
     def current_status(self):
         """The current status is represented by the last status occured in time."""
