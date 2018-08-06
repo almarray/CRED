@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'polls.apps.PollsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -118,3 +119,29 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR,'static'),
+]
+
+## Configuration of the GPIO for RPI.
+## TODO : Ok, I know this is not really nice. Should be better coded at the app level. Need to move it later.
+# First check we are running the program on RPI by checking the import of the RPi library is successful.
+is_on_rpi = False
+try:
+    import RPi.GPIO as GPIO
+    is_on_rpi = True
+except (ImportError, RuntimeError):
+    is_on_rpi = False
+
+# Configure GPIO inputs in the following array.
+# Setup your inputs here and outputs here.
+INPUTS=[24,7,14,11,23]
+OUTPUTS=[8]
+if is_on_rpi:
+    GPIO.setmode(GPIO.BOARD)
+    for input in INPUTS:
+        GPIO.setup(input, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    for output in OUTPUTS:
+        GPIO.setup(output, GPIO.OUT)
+
