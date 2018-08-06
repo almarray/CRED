@@ -24,6 +24,28 @@ class PollsConfig(AppConfig):
             self.start_monitoring()
 
 
+    def start_monitoring(self):
+        for input in self.INPUTS:
+            GPIO.add_event_detect(input, GPIO.BOTH, callback=self.set_status_callback, bouncetime=200)
+
+
+    def set_status_callback(self, channel):
+        """
+        :param channel:
+        :return:
+        """
+        p = Pompe.get_by_gpio(channel)
+        current_status = p.current_status()
+        s = Status(pompe=p)
+        if GPIO.input(channel) == 0:
+            if current_status.etat != Status.OK:
+                s.etat = Status.OK
+                s.save()
+        elif current_status.etat != Status.DEFAULT:
+            s.etat = Status.DEFAULT
+            s.save()
+
+
     def get_status(self):
         """
         Get the initial status of the IO at startup.
