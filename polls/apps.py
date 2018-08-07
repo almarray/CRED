@@ -76,6 +76,6 @@ class PollsConfig(AppConfig):
         if self.is_on_rpi:
             GPIO.setmode(GPIO.BOARD)
             for input in self.INPUTS:
-                GPIO.setup(input, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+                GPIO.setup(input, GPIO.IN)
             for output in self.OUTPUTS:
                 GPIO.setup(output, GPIO.OUT)
