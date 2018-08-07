@@ -1,27 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <title>Controlleur Réserve d'Eau de Drainage</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet">
-</head>
-<body id="page-top">
-<div class="container">
+{% extends "polls/base.html" %}
+{% load humanize %}
+
+{% block content %}
 <div class="row">
-{% if pompes %}
-<ul>
-    {% for p in pompes %}
-    <li><a href="/polls/{{p.id}}">{{ p.name }}</a> : {{ p.current_state.state }} at {{ p.current_state.date }}</li>
-    {% endfor %}
-</ul>
-{% else %}
-Contatez l'administrateur pour configurer le systeme.
+
+    <div class="col-md-8 offset-md-2 bg-success m10">
+        <div class="">
+            <h1>
+                <a href="{% url 'log' puisard.id %}">{{ puisard.name }}</a> : {{ puisard.current_state.state }} at {{ puisard.current_state.date|naturaltime }}
+            </h1>
+        </div>
+    </div>
+</div>
+<div class="row">
+
+    <div class="col-md-2 bg-success m10">
+        <div class="">
+            <h1><a href="{% url 'log' secteur.id %}">{{ secteur.name }}</a> : {{ secteur.current_state.state }} at {{ secteur.current_state.date|naturaltime }}</h1>
+        </div>
+    </div>
+    <div class="col-md-4 offset-md-8 bg-success m10">
+        <div class="">
+            <h1><a href="{% url 'log' ph.id %}">{{ ph.name }}</a> : {{ ph.current_state.state }} at {{ ph.current_state.date|naturaltime }}</h1>
+        </div>
+    </div>
+</div>
+<div class="row">
+
+    <div class="col-md-4 bg-info m10">
+        <div class="">
+            <h1><a href="{% url 'log' groupe.id %}">{{ groupe.name }}</a> : {{ groupe.current_state.state }} at {{ groupe.current_state.date|naturaltime }}</h1>
+        </div>
+    </div>
+    <div class="col-md-4 offset-md-4 bg-success m10">
+        <div class="">
+            <h1><a href="{% url 'log' pb.id %}">{{ pb.name }}</a> : {{ pb.current_state.state }} at {{ pb.current_state.date|naturaltime }}</h1>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 offset-md-8 bg-danger m10">
+        <div class="">
+            <h1><a href="{% url 'log' p12v.id %}">{{ p12v.name }}</a> : {{ p12v.current_state.state }} at {{ p12v.current_state.date|naturaltime }}</h1>
+        </div>
+    </div>
+</div>
+
+
+{% if not pompes %}
+<footer>
+    <div class="row">
+        Contatez l'administrateur pour configurer le systeme.
+    </div>
 {% endif %}
 </div>
-</div>
-<script src="http://code.jquery.com/jquery.js"></script>
-<script src="/static/bootstrap/js/bootstrap.min.js"></script>
-</body>
-</html>
+</footer>
+{% endblock %}
