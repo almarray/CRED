@@ -13,7 +13,7 @@
 {% if pompes %}
 <ul>
     {% for p in pompes %}
-    <li><a href="/polls/{{p.id}}">{{ p.name }}</a> : {{ p.current_status.etat }} </li>
+    <li><a href="/polls/{{p.id}}">{{ p.name }}</a> : {{ p.current_state.state }} at {{ p.current_state.date }}</li>
     {% endfor %}
 </ul>
 {% else %}

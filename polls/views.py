@@ -12,7 +12,7 @@ def index(request):
 def log(request, pompe_id):
     try:
         pompe = Pompe.objects.get(pk=pompe_id)
-        context = {'pompe': pompe, 'logs': pompe.status_log()}
+        context = {'pompe': pompe, 'logs': pompe.state_log()}
     except Pompe.DoesNotExist:
         raise Http404("Pompe object does not exist.")
     ## If pompe not found send 404

@@ -9,13 +9,8 @@ except (ImportError, RuntimeError):
 class PollsConfig(AppConfig):
     name = 'polls'
 
-    # Configure GPIO inputs in the following array.
-    # Setup your inputs here and outputs here.
-    INPUTS = [24, 7, 14, 11, 23]
-    OUTPUTS = [8]
-
-
     def ready(self):
+        """ Code executed on qpplicqtion start. """
         self.config()
         if self.is_on_rpi:
             # Set on stqrtup status right away.
@@ -34,32 +29,16 @@ class PollsConfig(AppConfig):
         :param channel:
         :return:
         """
+        from .models import Pompe, State
         p = Pompe.get_by_gpio(channel)
-        current_status = p.current_status()
-        s = Status(pompe=p)
-        if GPIO.input(channel) == 0:
-            if current_status.etat != Status.OK:
-                s.etat = Status.OK
-                s.save()
-        elif current_status.etat != Status.DEFAULT:
-            s.etat = Status.DEFAULT
-            s.save()
+        current_state = p.current_state().state
+        measured_state = bool(GPIO.input(channel))
 
+        if current_state != current_state:
+            new_state = State(pompe=p, state=measured_state)
+            new_state.save()
 
-    def get_status(self):
-        """
-        Get the initial status of the IO at startup.
-        """
-        if self.is_on_rpi:
-            for input in self.INPUTS:
-                p = Pompe.get_by_gpio(input)
-                s = Status(pompe=p)
-                if GPIO.input(input) == 0:
-                    s.etat = Status.OK
-                else:
-                    s.etat = Status.DEFAULT
-                s.save()
-
+    
 
     def config(self):
         """

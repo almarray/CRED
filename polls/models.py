@@ -18,12 +18,31 @@ class Pompe(models.Model):
         """ Returns the query set of the given statuses"""
         return self.status_set.all().order_by("-date")
 
+
+    def state_log(self):
+        """ Returns the query set of the given statuses"""
+        return self.state_set.all().order_by("-date")
+
+    def current_state(self):
+        """The current status is represented by the last status occured in time."""
+        return self.state_set.latest('date')
+
     def current_status(self):
         """The current status is represented by the last status occured in time."""
         return self.status_set.latest('date')
 
     def __str__(self):
         return str(self.name)
+
+
+
+
+class State(models.Model):
+    """ Represents the measured state of the GPIO."""
+    pompe = models.ForeignKey(Pompe, on_delete=models.CASCADE)
+    state = models.BooleanField()
+    date = models.DateTimeField(auto_now_add=True)
+
 
 
 class Status(models.Model):
@@ -55,7 +74,7 @@ class Status(models.Model):
         default=OK
     )
     # Datetime of the event
-    date = models.DateTimeField('date', auto_now=True)
+    date = models.DateTimeField('date', auto_now_add=True)
 
     def __str_(self):
         return str(self.etat) + " at " + self.date.strftime("%Y-%m-%d %H:%M:%S")
