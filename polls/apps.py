@@ -1,5 +1,4 @@
 from django.apps import AppConfig
-from polls.models import Pompe, Status
 
 try:
     import RPi.GPIO as GPIO
@@ -11,18 +10,15 @@ class PollsConfig(AppConfig):
 
     def ready(self):
         """ Code executed on qpplicqtion start. """
-        self.config()
+        self.is_on_rpi = False
+        try:
+            import RPi.GPIO as GPIO
+            self.is_on_rpi = True
+        except (ImportError, RuntimeError):
+            self.is_on_rpi = False
         if self.is_on_rpi:
-            # Set on stqrtup status right away.
-            self.get_status()
-            # Set monitoring.
-            self.start_monitoring()
-
-
-    def start_monitoring(self):
-        for input in self.INPUTS:
-            GPIO.add_event_detect(input, GPIO.BOTH, callback=self.set_status_callback, bouncetime=200)
-
+            print("Initialization sequence...")
+            self.config()
 
     def set_status_callback(self, channel):
         """
@@ -30,11 +26,12 @@ class PollsConfig(AppConfig):
         :return:
         """
         from .models import Pompe, State
+        print("IO change detected on " + str(channel) + " - " + str(GPIO.input(channel)))
         p = Pompe.get_by_gpio(channel)
         current_state = p.current_state().state
         measured_state = bool(GPIO.input(channel))
 
-        if current_state != current_state:
+        if current_state != measured_state:
             new_state = State(pompe=p, state=measured_state)
             new_state.save()
 
@@ -45,16 +42,15 @@ class PollsConfig(AppConfig):
         Configure RPi to actually run correctly
         :return:
         """
-        self.is_on_rpi = False
-        try:
-            import RPi.GPIO as GPIO
-            self.is_on_rpi = True
-        except (ImportError, RuntimeError):
-            self.is_on_rpi = False
-
+        print("Start config : " + str(self.is_on_rpi) )
         if self.is_on_rpi:
-            GPIO.setmode(GPIO.BOARD)
-            for input in self.INPUTS:
-                GPIO.setup(input, GPIO.IN)
-            for output in self.OUTPUTS:
-                GPIO.setup(output, GPIO.OUT)
+            from .models import Pompe, State
+            GPIO.setmode(GPIO.BCM)
+            pompes = Pompe.objects.all()
+            for p in pompes:
+                print("Configuring : " + str(p.name) + " (" + str(p.gpio) + ")")
+                GPIO.setup(p.gpio, GPIO.IN)
+                # Initialize state
+                new_state = State(pompe=p, state=bool(GPIO.input(p.gpio)))
+                new_state.save()
+                GPIO.add_event_detect(p.gpio, GPIO.BOTH, callback=self.set_status_callback, bouncetime=200)
