@@ -1,11 +1,12 @@
-Controlleur de Réserver  d"Eau Drainage : projet de conntroller avec Rpi pour vérifier la présence d'eau dans le garage, informer et controller la pompe.
+Controleur de Réserve  d'Eau de Drainage : projet avec Rpi pour controler les état de fonctionnement de 3 pompes permettant de réguler le niveau d'eau dans un puisard, et un générateur electrogène en cas de perte de secteur. 
 
 # Installation / Instructions
 
 ## Démarrer le projet : 
 
 
-Pompes H,B, 12, Secteur ... Monitor status logs. 0-5
+Pompes haute PH, pompe basse PB, pompe 12V PV, Secteur ... 
+Monitor status logs. 0-5
 Calcul de débit.
 
 ## To migrate
